@@ -1,9 +1,6 @@
 package com.realdolmen.jdbc;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +31,18 @@ public class BookDAOImpl implements BookDAO {
     }
 
     @Override
+    public void updateBook(Book b) {
+        try (Connection connection = ConnectionFactory.INSTANCE.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement("UPDATE INTO book (title, author) VALUES (?,?,?)");
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
     public List<Book> findBookByTitle(String title) {
 
     try (Connection connection = ConnectionFactory.INSTANCE.getConnection()) {
@@ -53,5 +62,70 @@ public class BookDAOImpl implements BookDAO {
 
         return null;
     }
+
+    @Override
+    public List<Book> findBookById(Integer id) {
+        try (Connection connection = ConnectionFactory.INSTANCE.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement("SELECT id, title, author FROM book where id LIKE ?");
+
+            statement.setInt(1,id);
+            ResultSet rs = statement.executeQuery();
+            List<Book> books = new ArrayList<>();
+
+            while (rs.next()) {
+                books.add (new Book(rs.getInt("id"), rs.getString("title"), rs.getString("author")));
+            }
+            return books;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+        return null;
+    }
+
+    @Override
+    public List<Book> findBookByAuthor(String author) {
+
+        try (Connection connection = ConnectionFactory.INSTANCE.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement("SELECT id, title, author FROM book WHERE author like ?");
+
+
+
+            statement.setString(1, author + "%");
+            ResultSet rs = statement.executeQuery();
+            List<Book> books = new ArrayList<>();
+            while (rs.next()){
+                books.add(new Book(rs.getInt("id"), rs.getString("title"), rs.getString("author")));
+            }
+            return books;
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    @Override
+    public List<Book> FindAllBooks() {
+        try (Connection connection = ConnectionFactory.INSTANCE.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement("SELECT id, title, author FROM book");
+
+            ResultSet rs = statement.executeQuery();
+            List<Book> books = new ArrayList<>();
+            while (rs.next()){
+                books.add(new Book(rs.getInt("id"), rs.getString("title"), rs.getString("author")));
+            }
+            return books;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
 }

@@ -8,9 +8,16 @@ import java.util.List;
 public interface BookDAO {
 
     void createBook(Book b);
-    List<Book> findBookByTitle(String Title);
 
+    void updateBook (Book b);
 
+    List<Book> findBookByTitle(String title);
+
+    List<Book> findBookById(Integer id);
+
+    List<Book> findBookByAuthor(String author);
+
+    List<Book> FindAllBooks();
 
 
 }
